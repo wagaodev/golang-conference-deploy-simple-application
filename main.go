@@ -1,11 +1,24 @@
 package main
 
-import "net/http"
+import (
+	"log"
+	"net/http"
+	"os"
+)
 
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", basePath)
-	http.ListenAndServe(":8080", mux)
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	log.Printf("Listening on port %s\n", port)
+	if err := http.ListenAndServe(":"+port, mux); err != nil {
+		log.Fatalf("Error when starting server: %s", err)
+	}
 }
 
 func basePath(w http.ResponseWriter, r *http.Request) {
